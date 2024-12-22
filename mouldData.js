@@ -23,17 +23,20 @@ function mouldProductAssignmentData() {
     const resultMouldData = new Map();
     const productChargesMap = mapProductCharges();
 
-    for (let i = 0; i < productAssignmentData.length; i++) {
-        const assignment = productAssignmentData[i];
+    for (const assignment of productAssignmentData) {
         const charge = productChargesMap.get(assignment.id);
-        resultMouldData.set(assignment.reservation_uuid, [
-            {
-                productId: assignment.id,
-                productName: assignment.name,
-                productStatus: charge ? charge.active : undefined,
-                productCost: charge ? charge.amount : undefined,
-            },
-        ]);
+        const productData = {
+            productId: assignment.id,
+            productName: assignment.name,
+            productStatus: charge?.active,
+            productCost: charge?.amount,
+        };
+    
+        if (resultMouldData.has(assignment.reservation_uuid)) {
+            resultMouldData.get(assignment.reservation_uuid).push(productData);
+        } else {
+            resultMouldData.set(assignment.reservation_uuid, [productData]);
+        }
     }
     return resultMouldData;
 }
